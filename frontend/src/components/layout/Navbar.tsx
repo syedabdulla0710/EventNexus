@@ -32,12 +32,12 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled 
-        ? 'glass shadow-lg py-2' 
+      scrolled || isOpen
+        ? 'bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl shadow-lg py-2' 
         : 'bg-transparent py-4'
     }`}>
       <div className="section-container">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <Link to="/" className="flex items-center gap-4 group">
             {/* Custom Logo Icon */}
             <div className="relative w-[52px] h-[52px] bg-gradient-to-r from-purple-600 via-fuchsia-500 to-orange-400 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg overflow-hidden shrink-0">
@@ -161,36 +161,38 @@ const Navbar: React.FC = () => {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden mt-4 pb-4 animate-slide-down">
-            <div className="flex flex-col gap-1">
-              {navLinks.map(link => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === link.to
-                      ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                      : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <hr className="my-2 border-surface-200 dark:border-surface-700" />
-              {user ? (
-                <>
-                  <Link to="/dashboard" className="px-4 py-3 rounded-lg text-sm font-medium text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800">
-                    Dashboard
+            <div className="bg-white/95 dark:bg-surface-900/95 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-surface-200 dark:border-surface-700">
+              <div className="flex flex-col gap-1">
+                {navLinks.map(link => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                      location.pathname === link.to
+                        ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                        : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800'
+                    }`}
+                  >
+                    {link.label}
                   </Link>
-                  <button onClick={logout} className="px-4 py-3 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 text-left hover:bg-red-50 dark:hover:bg-red-900/20">
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <div className="flex flex-col gap-2 px-4 pt-2">
-                  <Link to="/login" className="btn-secondary text-sm text-center">Log In</Link>
-                  <Link to="/register" className="btn-primary text-sm text-center">Sign Up</Link>
-                </div>
-              )}
+                ))}
+                <hr className="my-2 border-surface-200 dark:border-surface-700" />
+                {user ? (
+                  <>
+                    <Link to="/dashboard" className="px-4 py-3 rounded-xl text-sm font-medium text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800">
+                      Dashboard
+                    </Link>
+                    <button onClick={logout} className="px-4 py-3 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 text-left hover:bg-red-50 dark:hover:bg-red-900/20">
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex flex-col gap-2 pt-2">
+                    <Link to="/login" className="btn-secondary text-sm text-center">Log In</Link>
+                    <Link to="/register" className="btn-primary text-sm text-center">Sign Up</Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
