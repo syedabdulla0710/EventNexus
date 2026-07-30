@@ -54,9 +54,9 @@ const Footer: React.FC = () => {
       {/* Gradient accent line */}
       <div className="h-1 bg-gradient-to-r from-primary-500 via-accent-400 to-primary-500" />
 
-      <div className="section-container py-16">
+      <div className="section-container py-10 md:py-16">
         {/* Top section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 md:gap-12 mb-8 md:mb-12">
           {/* Brand + Newsletter */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
@@ -89,21 +89,23 @@ const Footer: React.FC = () => {
             </form>
           </div>
 
-          {/* Link Columns */}
-          {Object.entries(footerLinks).map(([title, links]) => (
-            <div key={title}>
-              <h4 className="text-white font-display font-semibold text-sm mb-4 uppercase tracking-wider">{title}</h4>
-              <ul className="space-y-3">
-                {links.map(link => (
-                  <li key={link.label}>
-                    <Link to={link.to} className="text-sm text-surface-400 hover:text-primary-400 transition-colors duration-200">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Link Columns — 2x2 grid on mobile, 4 columns on desktop */}
+          <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {Object.entries(footerLinks).map(([title, links]) => (
+              <div key={title}>
+                <h4 className="text-white font-display font-semibold text-sm mb-3 md:mb-4 uppercase tracking-wider">{title}</h4>
+                <ul className="space-y-2 md:space-y-3">
+                  {links.map(link => (
+                    <li key={link.label}>
+                      <Link to={link.to} className="text-sm text-surface-400 hover:text-primary-400 transition-colors duration-200">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Divider */}

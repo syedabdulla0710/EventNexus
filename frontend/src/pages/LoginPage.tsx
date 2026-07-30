@@ -32,7 +32,12 @@ const LoginPage: React.FC = () => {
       toast.success(`Welcome back, ${form.username}! 🎉`);
       navigate('/');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Invalid credentials. Please try again.');
+      const msg = err.response?.data?.message || '';
+      if (msg.toLowerCase().includes('invalid') || err.response?.status === 401) {
+        toast.error('Account not found. Please sign up first! 🚀', { duration: 5000 });
+      } else {
+        toast.error(msg || 'Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
