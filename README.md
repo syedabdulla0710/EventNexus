@@ -16,6 +16,12 @@
   built with Spring Boot, React 19, PostgreSQL, and Google Gemini AI.
 </p>
 
+<p align="center">
+  <a href="https://event-nexus-dusky.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/🔴_Live_Demo-event--nexus--dusky.vercel.app-FF0000?style=for-the-badge" alt="Live Demo" />
+  </a>
+</p>
+
 ---
 
 ## 📋 Table of Contents
