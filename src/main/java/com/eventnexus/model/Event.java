@@ -1,34 +1,39 @@
 package com.eventnexus.model;
 
+import jakarta.persistence.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Core domain model representing a bookable event.
  * 
- * Data Structures Used:
- * - TreeMap<Integer, String>: Ordered seat map (seat number → username). 
- *   TreeMap ensures O(log n) seat assignment and maintains sorted seat order.
- * - ConcurrentLinkedQueue<WaitlistEntry>: Thread-safe FIFO waitlist queue.
- *   When seats become available via cancellation, waitlisted users are
- *   automatically promoted in first-come-first-served order.
- * 
- * Concurrency: All booking/cancellation operations are synchronized to prevent
- * race conditions (e.g., two users booking the last seat simultaneously).
+ * Concurrency is now handled by JPA pessimistic locking at the repository/service layer
+ * rather than synchronized methods.
  */
+@Entity
+@Table(name = "events")
 public class Event {
+    @Id
     private String eventId;
     private String name;
     private String date;
     private String location;
     private int totalSeats;
     private int availableSeats;
-    private final TreeMap<Integer, String> bookings;
-    private final Queue<WaitlistEntry> waitlist;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "event_bookings", joinColumns = @JoinColumn(name = "event_id"))
+    @MapKeyColumn(name = "seat_number")
+    @Column(name = "username")
+    private Map<Integer, String> bookings;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "event_id")
+    @OrderBy("id ASC")
+    private List<WaitlistEntry> waitlist;
 
     public Event() {
-        this.bookings = new TreeMap<>();
-        this.waitlist = new ConcurrentLinkedQueue<>();
+        this.bookings = new HashMap<>();
+        this.waitlist = new ArrayList<>();
     }
 
     public Event(String eventId, String name, String date, String location, int totalSeats) {
@@ -38,20 +43,11 @@ public class Event {
         this.location = location;
         this.totalSeats = totalSeats;
         this.availableSeats = totalSeats;
-        this.bookings = new TreeMap<>();
-        this.waitlist = new ConcurrentLinkedQueue<>();
+        this.bookings = new HashMap<>();
+        this.waitlist = new ArrayList<>();
     }
 
-    /**
-     * Books the requested number of seats for a user.
-     * Uses synchronized to prevent race conditions during concurrent bookings.
-     * If insufficient seats, the user is added to the waitlist queue.
-     *
-     * @param username the user requesting seats
-     * @param seats    number of seats to book
-     * @return true if booking succeeded, false if added to waitlist
-     */
-    public synchronized boolean bookSeats(String username, int seats) {
+    public boolean bookSeats(String username, int seats) {
         if (seats <= 0) {
             throw new IllegalArgumentException("Seat count must be positive");
         }
@@ -68,15 +64,7 @@ public class Event {
         return true;
     }
 
-    /**
-     * Cancels the specified number of seats for a user.
-     * After cancellation, automatically promotes waitlisted users if seats open up.
-     *
-     * @param username the user cancelling seats
-     * @param seats    number of seats to cancel
-     * @return true if cancellation succeeded
-     */
-    public synchronized boolean cancelSeats(String username, int seats) {
+    public boolean cancelSeats(String username, int seats) {
         if (seats <= 0) {
             throw new IllegalArgumentException("Seat count must be positive");
         }
@@ -105,11 +93,6 @@ public class Event {
         return true;
     }
 
-    /**
-     * Promotes waitlisted users when seats become available.
-     * Processes the waitlist in FIFO order — the user who joined
-     * the waitlist first gets priority.
-     */
     private void allocateSeatsFromWaitlist() {
         Iterator<WaitlistEntry> iterator = waitlist.iterator();
         while (iterator.hasNext() && availableSeats > 0) {
@@ -148,10 +131,18 @@ public class Event {
     public void setAvailableSeats(int availableSeats) { this.availableSeats = availableSeats; }
 
     public Map<Integer, String> getBookings() {
-        return Collections.unmodifiableMap(bookings);
+        return bookings;
     }
 
-    public Queue<WaitlistEntry> getWaitlist() {
-        return new ConcurrentLinkedQueue<>(waitlist);
+    public void setBookings(Map<Integer, String> bookings) {
+        this.bookings = bookings;
+    }
+
+    public List<WaitlistEntry> getWaitlist() {
+        return waitlist;
+    }
+
+    public void setWaitlist(List<WaitlistEntry> waitlist) {
+        this.waitlist = waitlist;
     }
 }

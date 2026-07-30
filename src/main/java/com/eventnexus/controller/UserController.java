@@ -3,6 +3,7 @@ package com.eventnexus.controller;
 import com.eventnexus.dto.AuthResponse;
 import com.eventnexus.dto.UserRequest;
 import com.eventnexus.model.Event;
+import com.eventnexus.model.User;
 import com.eventnexus.service.EventService;
 import com.eventnexus.service.UserService;
 import jakarta.validation.Valid;
@@ -58,5 +59,10 @@ public class UserController {
     @GetMapping("/{username}/bookings")
     public ResponseEntity<List<Event>> getBookedEvents(@PathVariable String username) {
         return ResponseEntity.ok(eventService.getBookedEventsByUser(username));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

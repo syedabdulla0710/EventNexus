@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="36" viewBox="0 0 120 36">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#6a11cb"/>
+      <stop offset="1" stop-color="#2575fc"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="36" rx="6" fill="#0f0f12"/>
+  <g transform="translate(8,6)">
+    <circle cx="10" cy="12" r="10" fill="url(#g)"/>
+    <text x="30" y="18" font-family="Poppins, sans-serif" font-weight="600" font-size="14" fill="#fff">District</text>
+  </g>
+</svg>
+

@@ -1,47 +1,23 @@
 package com.eventnexus.repository;
 
 import com.eventnexus.model.Event;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import jakarta.persistence.LockModeType;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
-/**
- * In-memory repository for Event entities.
- * Uses ConcurrentHashMap for thread-safe read/write operations,
- * enabling safe concurrent access without external synchronization.
- */
 @Repository
-public class EventRepository {
-    private final ConcurrentHashMap<String, Event> events = new ConcurrentHashMap<>();
+public interface EventRepository extends JpaRepository<Event, String> {
 
-    public Event save(Event event) {
-        events.put(event.getEventId(), event);
-        return event;
-    }
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT e FROM Event e WHERE e.eventId = :eventId")
+    Optional<Event> findByIdForUpdate(@Param("eventId") String eventId);
 
-    public Optional<Event> findById(String eventId) {
-        return Optional.ofNullable(events.get(eventId));
-    }
-
-    public Collection<Event> findAll() {
-        return events.values();
-    }
-
-    public List<Event> findByBookedUser(String username) {
-        return events.values().stream()
-                .filter(event -> event.getBookings().containsValue(username))
-                .collect(Collectors.toList());
-    }
-
-    public boolean existsById(String eventId) {
-        return events.containsKey(eventId);
-    }
-
-    public void deleteById(String eventId) {
-        events.remove(eventId);
-    }
+    @Query("SELECT e FROM Event e JOIN e.bookings b WHERE b = :username")
+    List<Event> findByBookedUser(@Param("username") String username);
 }

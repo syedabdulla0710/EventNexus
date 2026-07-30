@@ -1,10 +1,17 @@
 package com.eventnexus.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 /**
  * Represents a registered user in the system.
  * Supports two roles: USER (can book events) and ORGANIZER (can create events).
  */
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
     private String username;
     private String password;
     private String role;

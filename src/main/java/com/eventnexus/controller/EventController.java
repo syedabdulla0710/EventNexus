@@ -38,7 +38,14 @@ public class EventController {
 
     @GetMapping("/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable String eventId) {
-        return ResponseEntity.ok(eventService.getEvent(eventId));
+        Event event = eventService.getEvent(eventId);
+        return ResponseEntity.ok(event);
+    }
+
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable String eventId) {
+        eventService.deleteEvent(eventId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{eventId}/book")
