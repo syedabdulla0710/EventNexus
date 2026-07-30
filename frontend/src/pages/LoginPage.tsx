@@ -32,9 +32,12 @@ const LoginPage: React.FC = () => {
       toast.success(`Welcome back, ${form.username}! 🎉`);
       navigate('/');
     } catch (err: any) {
+      const status = err.response?.status;
       const msg = err.response?.data?.message || '';
-      if (msg.toLowerCase().includes('invalid') || err.response?.status === 401) {
-        toast.error('Account not found. Please sign up first! 🚀', { duration: 5000 });
+      
+      if (status === 401 || msg.toLowerCase().includes('invalid') || !err.response) {
+        toast.error('Account not found. Please sign up first! 🚀', { duration: 4000 });
+        setTimeout(() => navigate('/register'), 2000);
       } else {
         toast.error(msg || 'Something went wrong. Please try again.');
       }
