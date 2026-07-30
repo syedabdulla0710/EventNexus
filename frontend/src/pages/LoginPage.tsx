@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
     try {
-      const res = await apiLogin(form);
+      await apiLogin(form);
       login({ username: form.username, authdata: window.btoa(`${form.username}:${form.password}`) });
       toast.success(`Welcome back, ${form.username}! 🎉`);
       navigate('/');

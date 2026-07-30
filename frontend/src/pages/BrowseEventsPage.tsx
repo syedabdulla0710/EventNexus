@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiOutlineSearch, HiOutlineFilter, HiOutlineViewGrid, HiOutlineViewList, HiOutlineAdjustments } from 'react-icons/hi';
+import { HiOutlineSearch, HiOutlineViewGrid, HiOutlineViewList, HiOutlineAdjustments } from 'react-icons/hi';
 import EventCard from '../components/events/EventCard';
 import EventAIChatbot from '../components/events/EventAIChatbot';
 import { seedEvents, categories } from '../data/seedEvents';

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
 import { HiOutlineSearch, HiOutlineArrowRight, HiOutlineStar, HiOutlineLightningBolt, HiOutlineTicket, HiOutlineUserGroup } from 'react-icons/hi';
 import EventCard from '../components/events/EventCard';
-import { seedEvents, categories, getFeaturedEvents } from '../data/seedEvents';
+import { categories, getFeaturedEvents } from '../data/seedEvents';
 import { testimonials } from '../data/seedTestimonials';
 
 const HomePage: React.FC = () => {

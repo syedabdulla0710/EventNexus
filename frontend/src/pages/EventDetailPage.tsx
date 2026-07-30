@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
   HiOutlineCalendar, HiOutlineLocationMarker, HiOutlineUsers, HiOutlineTicket,
   HiOutlineHeart, HiHeart, HiOutlineShare, HiOutlineGlobe, HiOutlineArrowLeft,
