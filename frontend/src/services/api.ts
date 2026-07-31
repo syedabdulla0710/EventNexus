@@ -5,12 +5,29 @@ const API_URL = process.env.REACT_APP_API_BASE_URL
     : 'http://localhost:8081/api';
 
 axios.interceptors.request.use(config => {
+    // Don't send Authorization header for login or register endpoints
+    if (config.url?.includes('/users/login') || config.url?.includes('/users/register')) {
+        return config;
+    }
+
     const user = JSON.parse(localStorage.getItem('user') || 'null');
     if (user && user.authdata) {
         config.headers.Authorization = `Basic ${user.authdata}`;
     }
     return config;
 });
+
+// Add a response interceptor to catch 401 errors globally
+axios.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response && error.response.status === 401) {
+            // If Spring Security rejects the token, clear it so it doesn't break future requests
+            localStorage.removeItem('user');
+        }
+        return Promise.reject(error);
+    }
+);
 
 export const getEvents = () => {
     return axios.get(`${API_URL}/events`);
