@@ -4,7 +4,7 @@ export const useTheme = () => {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('eventnexus-theme');
     if (saved) return saved === 'dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return true; // Default to dark mode for all new users
   });
 
   useEffect(() => {
