@@ -27,27 +27,29 @@ const LoginPage: React.FC = () => {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
     try {
-      await apiLogin(form);
-      login({ username: form.username, authdata: window.btoa(`${form.username}:${form.password}`) });
-      toast.success(`Welcome back, ${form.username}! 🎉`);
-      navigate('/');
-    } catch (err: any) {
-      const msg = err.response?.data?.message || '';
-      
-      if (!err.response) {
-        // Network or CORS error
-        toast.error('Unable to connect to server. Please try again later.', { duration: 4000 });
-      } else if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('register')) {
-        // User doesn't exist
-        toast.error('Account not found. Please sign up first! 🚀', { duration: 4000 });
-        setTimeout(() => navigate('/register'), 2000);
-      } else if (msg.toLowerCase().includes('invalid password')) {
-        // Wrong password
-        toast.error('Invalid password. Please try again.', { duration: 4000 });
+      const res = await apiLogin(form);
+      const data = res.data;
+
+      if (data.success) {
+        // Login successful
+        login({ username: form.username, authdata: window.btoa(`${form.username}:${form.password}`) });
+        toast.success(`Welcome back, ${form.username}! 🎉`);
+        navigate('/');
       } else {
-        // Any other backend error
-        toast.error(msg || 'Invalid credentials. Please try again.');
+        // Login failed — check the message from backend
+        const msg = (data.message || '').toLowerCase();
+        if (msg.includes('not found') || msg.includes('register')) {
+          toast.error('Account not found. Please sign up first! 🚀', { duration: 4000 });
+          setTimeout(() => navigate('/register'), 2000);
+        } else if (msg.includes('invalid password')) {
+          toast.error('Invalid password. Please try again.', { duration: 4000 });
+        } else {
+          toast.error(data.message || 'Invalid credentials. Please try again.');
+        }
       }
+    } catch (err: any) {
+      // Network / CORS error
+      toast.error('Unable to connect to server. Please try again later.', { duration: 4000 });
     } finally {
       setLoading(false);
     }

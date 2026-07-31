@@ -46,8 +46,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> loginUser(@Valid @RequestBody UserRequest request) {
         AuthResponse response = userService.loginUser(request.getUsername(), request.getPassword());
-        HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
-        return ResponseEntity.status(status).body(response);
+        // Always return 200 so Spring Security doesn't hijack the response body on 401
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/logout")

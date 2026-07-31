@@ -42,7 +42,7 @@ export const register = (user: any) => {
 
 export const login = (user: any) => {
     return axios.post(`${API_URL}/users/login`, user).then(response => {
-        if (response.data) {
+        if (response.data && response.data.success) {
             const authdata = window.btoa(user.username + ':' + user.password);
             const userData = {
                 username: user.username,
