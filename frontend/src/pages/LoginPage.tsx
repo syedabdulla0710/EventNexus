@@ -49,11 +49,24 @@ const LoginPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Login error:', err);
-      if (err.response?.status === 401) {
-        toast.error('Invalid credentials. Please try again.', { duration: 4000 });
-      } else {
-        // Network / CORS error
+      
+      if (!err.response) {
+        // Genuine network / CORS error
         toast.error('Unable to connect to server. Check console for details.', { duration: 4000 });
+      } else if (err.response.status === 401) {
+        toast.error('Invalid credentials. Please try again.', { duration: 4000 });
+      } else if (err.response.status === 400) {
+        // Handle validation errors (e.g. password < 4 chars)
+        const errors = err.response.data?.errors;
+        if (errors) {
+          const firstError = Object.values(errors)[0] as string;
+          toast.error(firstError || 'Validation failed. Please check your inputs.', { duration: 4000 });
+        } else {
+          toast.error(err.response.data?.message || 'Invalid request. Please try again.', { duration: 4000 });
+        }
+      } else {
+        // Any other server error
+        toast.error('Something went wrong. Please try again.', { duration: 4000 });
       }
     } finally {
       setLoading(false);
