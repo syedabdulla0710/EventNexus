@@ -6,6 +6,9 @@ const API_URL = process.env.REACT_APP_API_BASE_URL
     ? `${process.env.REACT_APP_API_BASE_URL}/api` 
     : (isDevelopment ? 'http://localhost:8081/api' : 'https://eventnexus-reuw.onrender.com/api');
 
+// Set a global timeout of 45 seconds (Render free tier cold starts can take 30s+)
+axios.defaults.timeout = 45000;
+
 axios.interceptors.request.use(config => {
     // Don't send Authorization header for login or register endpoints
     if (config.url?.includes('/users/login') || config.url?.includes('/users/register')) {

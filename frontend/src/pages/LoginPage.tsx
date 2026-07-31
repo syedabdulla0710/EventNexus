@@ -26,17 +26,23 @@ const LoginPage: React.FC = () => {
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
+
+    // Show a "waking up" toast if the request takes more than 3 seconds (Render cold start)
+    const wakeUpTimer = setTimeout(() => {
+      toast.loading('Server is waking up... This may take up to 30 seconds on first visit.', { id: 'wakeup', duration: 25000 });
+    }, 3000);
+
     try {
       const res = await apiLogin(form);
+      clearTimeout(wakeUpTimer);
+      toast.dismiss('wakeup');
       const data = res.data;
 
       if (data.success) {
-        // Login successful
         login({ username: form.username, authdata: window.btoa(`${form.username}:${form.password}`) });
         toast.success(`Welcome back, ${form.username}! 🎉`);
         navigate('/');
       } else {
-        // Login failed — check the message from backend
         const msg = (data.message || '').toLowerCase();
         if (msg.includes('not found') || msg.includes('register')) {
           toast.error('Account not found. Please sign up first! 🚀', { duration: 4000 });
@@ -48,24 +54,27 @@ const LoginPage: React.FC = () => {
         }
       }
     } catch (err: any) {
+      clearTimeout(wakeUpTimer);
+      toast.dismiss('wakeup');
       console.error('Login error:', err);
       
       if (!err.response) {
-        // Genuine network / CORS error
-        toast.error('Unable to connect to server. Check console for details.', { duration: 4000 });
+        if (err.code === 'ECONNABORTED') {
+          toast.error('Server is still starting up. Please wait a moment and try again.', { duration: 5000 });
+        } else {
+          toast.error('Unable to connect to server. Please try again later.', { duration: 4000 });
+        }
       } else if (err.response.status === 401) {
         toast.error('Invalid credentials. Please try again.', { duration: 4000 });
       } else if (err.response.status === 400) {
-        // Handle validation errors (e.g. password < 4 chars)
-        const errors = err.response.data?.errors;
-        if (errors) {
-          const firstError = Object.values(errors)[0] as string;
+        const validationErrors = err.response.data?.errors;
+        if (validationErrors) {
+          const firstError = Object.values(validationErrors)[0] as string;
           toast.error(firstError || 'Validation failed. Please check your inputs.', { duration: 4000 });
         } else {
           toast.error(err.response.data?.message || 'Invalid request. Please try again.', { duration: 4000 });
         }
       } else {
-        // Any other server error
         toast.error('Something went wrong. Please try again.', { duration: 4000 });
       }
     } finally {
