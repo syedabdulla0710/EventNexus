@@ -43,13 +43,16 @@ public class UserService implements UserDetailsService {
     }
 
     public AuthResponse loginUser(String username, String password) {
-        return userRepository.findByUsername(username)
-                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .map(user -> {
-                    loggedInUsers.add(username);
-                    return new AuthResponse(true, "Login successful", username, user.getRole());
-                })
-                .orElse(new AuthResponse(false, "Invalid username or password", null, null));
+        var optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty()) {
+            return new AuthResponse(false, "User not found. Please register first.", null, null);
+        }
+        var user = optionalUser.get();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return new AuthResponse(false, "Invalid password. Please try again.", null, null);
+        }
+        loggedInUsers.add(username);
+        return new AuthResponse(true, "Login successful", username, user.getRole());
     }
 
     public void logoutUser(String username) {

@@ -32,14 +32,21 @@ const LoginPage: React.FC = () => {
       toast.success(`Welcome back, ${form.username}! 🎉`);
       navigate('/');
     } catch (err: any) {
-      const status = err.response?.status;
       const msg = err.response?.data?.message || '';
       
-      if (status === 401 || msg.toLowerCase().includes('invalid') || !err.response) {
+      if (!err.response) {
+        // Network or CORS error
+        toast.error('Unable to connect to server. Please try again later.', { duration: 4000 });
+      } else if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('register')) {
+        // User doesn't exist
         toast.error('Account not found. Please sign up first! 🚀', { duration: 4000 });
         setTimeout(() => navigate('/register'), 2000);
+      } else if (msg.toLowerCase().includes('invalid password')) {
+        // Wrong password
+        toast.error('Invalid password. Please try again.', { duration: 4000 });
       } else {
-        toast.error(msg || 'Something went wrong. Please try again.');
+        // Any other backend error
+        toast.error(msg || 'Invalid credentials. Please try again.');
       }
     } finally {
       setLoading(false);
