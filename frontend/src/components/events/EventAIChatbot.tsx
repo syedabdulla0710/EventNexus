@@ -133,7 +133,7 @@ Only answer questions based on the event details provided. Be persuasive but hon
   return (
     <>
       {/* Floating Button with Pulse Ring & Tooltip */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center justify-center">
+      <div className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 flex items-center justify-center">
         
         {/* Premium Floating Tooltip */}
         <AnimatePresence>
@@ -194,7 +194,9 @@ Only answer questions based on the event details provided. Be persuasive but hon
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] h-[550px] max-h-[85vh] flex flex-col glass-card border border-surface-200 dark:border-surface-700 shadow-2xl overflow-hidden"
+            className="fixed z-50 flex flex-col glass-card border border-surface-200 dark:border-surface-700 shadow-2xl overflow-hidden
+              inset-0 rounded-none
+              md:inset-auto md:bottom-6 md:right-6 md:w-[380px] md:h-[550px] md:max-h-[85vh] md:rounded-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary-600 to-accent-500 text-white">
@@ -258,7 +260,6 @@ Only answer questions based on the event details provided. Be persuasive but hon
                 className="px-4 pb-3 pt-1 bg-surface-50 dark:bg-surface-900/50 flex gap-2 overflow-x-auto snap-x"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
-                {/* Hide webkit scrollbar via a style tag for this specific block */}
                 <style>{`
                   .quick-reply-container::-webkit-scrollbar { display: none; }
                 `}</style>
@@ -283,7 +284,7 @@ Only answer questions based on the event details provided. Be persuasive but hon
             )}
 
             {/* Input Form */}
-            <form onSubmit={handleSend} className="p-3 bg-surface-50 dark:bg-surface-900/50 border-t border-surface-200 dark:border-surface-700/50 flex gap-2">
+            <form onSubmit={handleSend} className="p-3 bg-surface-50 dark:bg-surface-900/50 border-t border-surface-200 dark:border-surface-700/50 flex gap-2 safe-area-bottom">
               <input
                 type="text"
                 value={input}
