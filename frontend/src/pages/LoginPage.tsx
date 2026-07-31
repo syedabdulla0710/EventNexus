@@ -48,11 +48,12 @@ const LoginPage: React.FC = () => {
         }
       }
     } catch (err: any) {
+      console.error('Login error:', err);
       if (err.response?.status === 401) {
         toast.error('Invalid credentials. Please try again.', { duration: 4000 });
       } else {
         // Network / CORS error
-        toast.error('Unable to connect to server. Please try again later.', { duration: 4000 });
+        toast.error('Unable to connect to server. Check console for details.', { duration: 4000 });
       }
     } finally {
       setLoading(false);
