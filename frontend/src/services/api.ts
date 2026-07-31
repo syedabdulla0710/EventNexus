@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
 const API_URL = process.env.REACT_APP_API_BASE_URL 
     ? `${process.env.REACT_APP_API_BASE_URL}/api` 
-    : 'http://localhost:8081/api';
+    : (isDevelopment ? 'http://localhost:8081/api' : 'https://eventnexus-reuw.onrender.com/api');
 
 axios.interceptors.request.use(config => {
     // Don't send Authorization header for login or register endpoints
